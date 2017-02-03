@@ -41,6 +41,7 @@
 				$("title").text(html);
 				// evaluate the tokens in the 'body' tag
 				source = $("body").html();
+				Handlebars.registerHelper('if', ifHelper);
 				template = Handlebars.compile(source);
 				html = template(context);
 				$("body").html(html);
@@ -86,6 +87,32 @@
 					}
 				}
 			}
+			function ifHelper (v1, operator, v2, options) {
+				switch (operator) {
+					case '==':
+						return (v1 == v2) ? options.fn(this) : options.inverse(this);
+					case '===':
+						return (v1 === v2) ? options.fn(this) : options.inverse(this);
+					case '!=':
+						return (v1 != v2) ? options.fn(this) : options.inverse(this);
+					case '!==':
+						return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+					case '<':
+						return (v1 < v2) ? options.fn(this) : options.inverse(this);
+					case '<=':
+						return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+					case '>':
+						return (v1 > v2) ? options.fn(this) : options.inverse(this);
+					case '>=':
+						return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+					case '&&':
+						return (v1 && v2) ? options.fn(this) : options.inverse(this);
+					case '||':
+						return (v1 || v2) ? options.fn(this) : options.inverse(this);
+					default:
+						return options.inverse(this);
+				}
+			}
 		});
 	</script>
 </head>
@@ -107,7 +134,11 @@
 							<ul class="subnav">
 								{{#each pages}}
 									<li class="toctree-l1">
-										<a href="{{url}}">{{title}}</a>
+										{{#if title '==' 'Noda Time User Guide'}}
+											<a href="{{url}}">Overview</a>
+										{{else}}
+											<a href="{{url}}">{{title}}</a>
+										{{/if}}
 									</li>
 								{{/each}}
 							</ul>
@@ -135,6 +166,7 @@
                     </div>
                     <div role="main">
                         <div class="section">
+							<h1>{{title}}</h1>
                             {{body}}
                         </div>
                     </div>
