@@ -4,15 +4,13 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width" />
-	<title>{{title}}</title>
+	<title>{{site.name}} | {{title}}</title>
 	<!-- foundation default -->
   	<link rel="stylesheet" href="/css/foundation.css" />
     <!-- Foundicons -->
     <link rel="stylesheet" href="/css/general_enclosed_foundicons.css">
 	<script src="/js/vendor/custom.modernizr.js"></script>
     <link rel="stylesheet" href="/css/main.css">
-	<!-- Handlerbars -->
-	<script src="/js/handlebars-v4.0.5.js"></script>
 	<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -26,7 +24,7 @@
 	<div class="fixed">
 		<nav class="top-bar">
 			<ul class="title-area">
-				<li class="name"><h1><a href="">Noda Time</a></h1></li>
+				<li class="name"><h1><a href="">{{site.name}}</a></h1></li>
 				<!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
     			<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 			</ul>
@@ -97,11 +95,7 @@
 					<div class="content" data-section-content>
 						<ul class="side-nav">
 							{{#each pages}}
-								{{#if title '==' 'Noda Time User Guide'}}
-									<li><a href="{{url}}" class="active">Overview</a></li>
-								{{else}}
-									<li><a href="{{url}}" class="active">{{title}}</a></li>
-								{{/if}}
+								<li><a href="{{url}}" class="active">{{title}}</a></li>
 							{{/each}}
 						</ul>
 					</div>
@@ -130,101 +124,6 @@
   <script>
     $(document).foundation();
   </script>
-  <script type="text/javascript">
-		$(function(){
-			var context = {};
-			$.get("/config.json", function(result)
-			{
-				context = eval(result);
-				context.title = "";
-				context.prevPage = {};
-				context.nextPage = {};
-				var pages = getPages(context.categories);
-				setTitle(pages);
-				// evaluate the tokens in the 'title' tag
-				var source = $("title").text();
-				var template = Handlebars.compile(source);
-				var html = template({
-					"siteName": context.siteName,
-					"title" : context.title
-				});
-				$("title").text(html);
-				// evaluate the tokens in the 'body' tag
-				source = $("body").html();
-				Handlebars.registerHelper('if', ifHelper);
-				template = Handlebars.compile(source);
-				html = template(context);
-				$("body").html(html);
-			});
-			function getPages(categories){
-				var pages = [];
-				$.each(categories, function(index, item){
-					$.each(item.pages, function(index, item){
-						pages.push(item);
-					});
-				});
-				return pages;
-			}
-			function setTitle(pages)
-			{
-				var url = location.href;
-				var slashIndex = url.lastIndexOf("/");
-				var pageUrl = url.substring(slashIndex + 1);
-				if(pageUrl == "")
-				{
-					context.title = pages[0].title;
-					context.prevPage.title = "";
-					context.prevPage.url = "#";
-					context.nextPage.title = pages[1].title;
-					context.nextPage.url = pages[1].url;
-					return;
-				}
-				for(var i = 1; i < pages.length; i++)
-				{			
-					if(pages[i].url == pageUrl){
-						context.title = pages[i].title;
-						context.prevPage.title = pages[i-1].title;
-						context.prevPage.url = pages[i-1].url;
-						if(pages.length - 1 == i){
-							context.nextPage.title = "";
-							context.nextPage.url = "#";
-						}
-						else{
-							context.nextPage.title = pages[i+1].title;		
-							context.nextPage.url = pages[i+1].url;
-						}
-						break;
-					}
-				}
-			}
-			function ifHelper (v1, operator, v2, options) {
-				switch (operator) {
-					case '==':
-						return (v1 == v2) ? options.fn(this) : options.inverse(this);
-					case '===':
-						return (v1 === v2) ? options.fn(this) : options.inverse(this);
-					case '!=':
-						return (v1 != v2) ? options.fn(this) : options.inverse(this);
-					case '!==':
-						return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-					case '<':
-						return (v1 < v2) ? options.fn(this) : options.inverse(this);
-					case '<=':
-						return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-					case '>':
-						return (v1 > v2) ? options.fn(this) : options.inverse(this);
-					case '>=':
-						return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-					case '&&':
-						return (v1 && v2) ? options.fn(this) : options.inverse(this);
-					case '||':
-						return (v1 || v2) ? options.fn(this) : options.inverse(this);
-					default:
-						return options.inverse(this);
-				}
-			}
-		});
-	</script>
   <!-- Nuget Button -->
   <script type="text/javascript">
   (function () {
